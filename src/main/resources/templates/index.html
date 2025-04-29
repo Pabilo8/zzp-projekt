@@ -7,7 +7,33 @@
   </head>
 
   <body>
-    <h2>Index Page</h2>
-    <p>Welcome to NAME PENDING</p>
+  <h2>Index Page</h2>
+  <p>Welcome to NAME PENDING</p>
+  <table>
+    <thead>
+    <tr>
+      <th>Nazwa</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="category : ${categories}">
+      <td th:text="${category.name}">Nazwa</td>
+      <td>
+        <form th:action="@{/category/delete/{id}(id=${category.id})}" method="post">
+          <button type="submit">Usuń</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <p th:if="${addCategoryError}" class="error">Istnieje już taka kategoria</p>
+  <form th:action="@{/addCategory}" method="post">
+    <label for="name">Nazwa kategorii:</label>
+    <input type="text" id="name" name="name" required>
+    <button type="submit">Dodaj</button>
+  </form>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit">Wyloguj</button>
+  </form>
   </body>
 </html>
