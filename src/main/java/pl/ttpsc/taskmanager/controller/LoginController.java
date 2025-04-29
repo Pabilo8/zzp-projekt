@@ -1,29 +1,39 @@
 package pl.ttpsc.taskmanager.controller;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import pl.ttpsc.taskmanager.service.LoginService;
 
 @Controller
-public class LoginController {
+public class LoginController
+{
 
-    private final LoginService _loginService;
+	private final LoginService _loginService;
 
-    public LoginController(LoginService loginService) {
-        this._loginService = loginService;
-    }
+	public LoginController(LoginService loginService)
+	{
+		this._loginService = loginService;
+	}
 
-    @GetMapping("/login")
-    public String login()
-    {
-        return "login";
-    }
+	@GetMapping("/index")
+	@Secured("ROLE_USER")
+	public String index()
+	{
+		return "index";
+	}
 
-    @GetMapping("/loginError")
-    public String loginError(Model model)
-    {
-        model.addAttribute("loginError", true);
-        return "login";
-    }
+	@GetMapping("/login")
+	public String login()
+	{
+		return "login";
+	}
+
+	@GetMapping("/loginError")
+	public String loginError(Model model)
+	{
+		model.addAttribute("loginError", true);
+		return "login";
+	}
 }

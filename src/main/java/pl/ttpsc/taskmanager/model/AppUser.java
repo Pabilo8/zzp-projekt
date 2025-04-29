@@ -9,36 +9,41 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class AppUser implements UserDetails {
+public class AppUser implements UserDetails
+{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-    @Column(name = "username")
-    private String username;
-    @Column(name = "password")
-    private String password;
-    @Column(name = "role")
-    private String role;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long id;
+	@Column(name = "username")
+	private String username;
+	@Column(name = "password")
+	private String password;
+	@Column(name = "role")
+	private String role;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> "ROLE_" + role);
-    }
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities()
+	{
+		return List.of(() -> "ROLE_"+role);
+	}
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
+	@Override
+	public String getPassword()
+	{
+		return password;
+	}
 
-    @Override
-    public String getUsername() {
-        return username;
-    }
+	@Override
+	public String getUsername()
+	{
+		return username;
+	}
 
-    public String getRole(){
-        return role;
-    }
+	public String getRole()
+	{
+		return role;
+	}
 
 }
