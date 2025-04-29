@@ -9,12 +9,12 @@ import pl.ttpsc.taskmanager.model.AppUser;
 import pl.ttpsc.taskmanager.repository.UserRepository;
 
 @Service
-public class LoginService implements UserDetailsService
+public class UserService implements UserDetailsService
 {
 	private final UserRepository _userRepository;
 
 	@Autowired
-	public LoginService(UserRepository userRepository)
+	public UserService(UserRepository userRepository)
 	{
 		this._userRepository = userRepository;
 	}

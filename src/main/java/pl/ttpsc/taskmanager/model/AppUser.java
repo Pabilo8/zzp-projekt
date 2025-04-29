@@ -16,12 +16,14 @@ public class AppUser implements UserDetails
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
-	@Column(name = "username")
+	@Column(name = "username", nullable = false, unique = true)
 	private String username;
-	@Column(name = "password")
+	@Column(name = "password", nullable = false)
 	private String password;
-	@Column(name = "role")
+	@Column(name = "role", nullable = false)
 	private String role;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Category> categories;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities()
@@ -41,9 +43,9 @@ public class AppUser implements UserDetails
 		return username;
 	}
 
-	public String getRole()
+	public Long getId()
 	{
-		return role;
+		return this.id;
 	}
 
 }

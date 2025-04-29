@@ -34,6 +34,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint
+                constraintName="uk_category_name_user"
+                tableName="categories"
+                columnNames="user_id, name"/>
         <addForeignKeyConstraint
                 constraintName="fk_categories_user"
                 baseTableName="categories"
@@ -88,12 +92,10 @@
             <column name="role" value="USER"/>
         </insert>
         <insert tableName="categories">
-            <column name="id" valueNumeric="1"/>
             <column name="name" value="testuser"/>
             <column name="user_id" valueNumeric="1"/>
         </insert>
         <insert tableName="tasks">
-            <column name="id" valueNumeric="1"/>
             <column name="title" value="First Task"/>
             <column name="description" value="LOREM IPSUM"/>
             <column name="status" value="NEW"/>

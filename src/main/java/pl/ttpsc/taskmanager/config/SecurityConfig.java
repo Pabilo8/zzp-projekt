@@ -8,18 +8,18 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import pl.ttpsc.taskmanager.service.LoginService;
+import pl.ttpsc.taskmanager.service.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig
 {
 
-	private final LoginService _loginService;
+	private final UserService _userService;
 
-	public SecurityConfig(LoginService loginService)
+	public SecurityConfig(UserService userService)
 	{
-		_loginService = loginService;
+		_userService = userService;
 	}
 
 	@Bean
@@ -27,7 +27,8 @@ public class SecurityConfig
 	{
 		http
 				.authorizeHttpRequests((requests) -> requests
-						.requestMatchers("/", "/index", "/h2-console/**").permitAll()
+						.requestMatchers("/login").permitAll()
+						.requestMatchers("/index", "/", "h2-console/**").authenticated()
 						.anyRequest().authenticated()
 				).formLogin((form) -> form
 						.loginPage("/login")
@@ -38,7 +39,7 @@ public class SecurityConfig
 						logout.permitAll()
 				).csrf((csrf) -> csrf.ignoringRequestMatchers("/h2-console/**")
 				).headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
-				).userDetailsService(_loginService);
+				).userDetailsService(_userService);
 
 		return http.build();
 	}
@@ -48,4 +49,5 @@ public class SecurityConfig
 	{
 		return new BCryptPasswordEncoder();
 	}
+
 }
