@@ -1,39 +1,60 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
-  <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Index Page</title>
-  </head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Index Page</title>
+        <script>
+            function toggleEdit(categoryId)
+            {
+                const form = document.getElementById('edit-form-' + categoryId);
+                if(form.style.display === 'none')
+                {
+                    form.style.display = 'inline';
+                }
+                else
+                {
+                    form.style.display = 'none';
+                }
+            }
+        </script>
+    </head>
 
-  <body>
-  <h2>Index Page</h2>
-  <p>Welcome to NAME PENDING</p>
-  <table>
-    <thead>
-    <tr>
-      <th>Nazwa</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="category : ${categories}">
-      <td th:text="${category.name}">Nazwa</td>
-      <td>
-        <form th:action="@{/category/delete/{id}(id=${category.id})}" method="post">
-          <button type="submit">Usuń</button>
+    <body>
+        <h2>Index Page</h2>
+        <p>Welcome to NAME PENDING</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="category : ${categories}">
+                    <td th:text="${category.name}">Nazwa</td>
+                    <td>
+                        <form th:action="@{/category/delete/{id}(id=${category.id})}" method="post">
+                        <button type="submit">Usuń</button>
+                        </form>
+                    </td>
+                    <td>
+                        <button type="button" th:onclick="'toggleEdit(' + ${category.id} + ')'">Edytuj</button>
+                        <form th:action="@{/category/edit/{id}(id=${category.id})}" method="post" th:id="'edit-form-' + ${category.id}" style="display:none;">
+                            <input type="text" name="name" th:value="${category.name}" required/>
+                            <button type="submit">Zapisz</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p th:if="${addCategoryError}" class="error">Istnieje już taka kategoria</p>
+        <form th:action="@{/addCategory}" method="post">
+            <label for="name">Nazwa kategorii:</label>
+            <input type="text" id="name" name="name" required>
+            <button type="submit">Dodaj</button>
         </form>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-  <p th:if="${addCategoryError}" class="error">Istnieje już taka kategoria</p>
-  <form th:action="@{/addCategory}" method="post">
-    <label for="name">Nazwa kategorii:</label>
-    <input type="text" id="name" name="name" required>
-    <button type="submit">Dodaj</button>
-  </form>
-  <form th:action="@{/logout}" method="post">
-    <button type="submit">Wyloguj</button>
-  </form>
-  </body>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Wyloguj</button>
+        </form>
+    </body>
 </html>
