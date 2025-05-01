@@ -39,9 +39,9 @@ public class HomeController
 		category.setName(name);
 		category.setUser(user);
 
-		boolean newlyAdded = _categoryService.saveCategory(category);
+		boolean completed = _categoryService.saveCategory(category);
 
-		if(!newlyAdded){
+		if(!completed){
 			redirectAttributes.addFlashAttribute("addCategoryError", true);
 		}
 

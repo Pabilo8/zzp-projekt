@@ -9,6 +9,7 @@
     <body>
     <h2>Login Page</h2>
     <p th:if="${loginError}" class="error">Złe hasło lub użytkownik</p>
+    <p th:if="${registerSuccess}" class="success">Pomyślnie zarejestrowano użytkownika</p>
     <form th:action="@{/login}" method="post">
         <label for="username">Username</label>:
         <input type="text" id="username" name="username" autofocus="autofocus" /> <br />
@@ -16,5 +17,8 @@
         <input type="password" id="password" name="password" /> <br />
         <input type="submit" value="Log in" />
     </form>
+    <a href="/register">
+        <button type="button">Rejestracja</button>
+    </a>
     </body>
 </html>
