@@ -86,7 +86,6 @@
 
     <changeSet id="4" author="Kubeva">
         <insert tableName="users">
-            <column name="id" valueNumeric="1"/>
             <column name="username" value="testuser"/>
             <column name="password" value="$2a$10$nlPaaakXNUJ3VvpvfIoB8OQc3OXmnZSAohBhmRheBBYvmM9.8I5my"/> <!--- hasło to testpass, generowane przez utility -->
             <column name="role" value="USER"/>

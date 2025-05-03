@@ -48,4 +48,19 @@ public class AppUser implements UserDetails
 		return this.id;
 	}
 
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
+
+	public void setPassword(String password)
+	{
+		this.password = password;
+	}
+
+	public void setRole(String role)
+	{
+		this.role = role;
+	}
+
 }

@@ -9,6 +9,7 @@ import pl.ttpsc.taskmanager.repository.CategoryRepository;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService
@@ -30,6 +31,7 @@ public class CategoryService
 	{
 		return _categoryRepository.findById(id).orElseThrow();
 	}
+
 
 	public boolean saveCategory(Category category)
 	{
@@ -53,6 +55,34 @@ public class CategoryService
 			else
 			{
 				throw new AccessDeniedException("Cannot delete this category - IDs don't match");
+			}
+		}
+	}
+
+	public void editCategory(Long categoryId, String newName, AppUser user) throws AccessDeniedException
+	{
+
+		Category category = getCategoryById(categoryId);
+
+		if(category != null)
+		{
+			if(category.getUser().getId().equals(user.getId()))
+			{
+				Optional<Category> exists = getCategoriesByUser(user).stream().filter( c -> c
+						.getName().equalsIgnoreCase(newName))
+						.findFirst();
+
+				if(exists.isPresent())
+				{
+					throw new AccessDeniedException("Cannot edit this category - another category has this name");
+				}
+
+				category.setName(newName);
+				_categoryRepository.save(category);
+			}
+			else
+			{
+				throw new AccessDeniedException("Cannot edit this category - IDs don't match");
 			}
 		}
 	}
