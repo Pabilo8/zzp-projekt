@@ -43,11 +43,17 @@ public class LoginController
 	}
 
 	@PostMapping("/register")
-	public String registerForm(@RequestParam String username, @RequestParam String password, Model model)
+	public String registerForm(@RequestParam String username, @RequestParam String password, @RequestParam String password_repeat, Model model)
 	{
 		if(username.isEmpty() || password.isEmpty())
 		{
 			model.addAttribute("registerEmpty", true);
+			return "register";
+		}
+
+		if(!password.equals(password_repeat))
+		{
+			model.addAttribute("passwordNotEqual", true);
 			return "register";
 		}
 

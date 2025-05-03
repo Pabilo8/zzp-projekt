@@ -33,10 +33,10 @@ public class HomeController
 
 	@PostMapping("/addCategory")
 	@Secured("ROLE_USER")
-	public String addCategory(String name, @AuthenticationPrincipal AppUser user, RedirectAttributes redirectAttributes)
+	public String addCategory(String category_name_add, @AuthenticationPrincipal AppUser user, RedirectAttributes redirectAttributes)
 	{
 		Category category = new Category();
-		category.setName(name);
+		category.setName(category_name_add);
 		category.setUser(user);
 
 		boolean completed = _categoryService.saveCategory(category);
@@ -58,9 +58,9 @@ public class HomeController
 
 	@PostMapping("/category/edit/{id}")
 	@Secured("ROLE_USER")
-	public String editCategory(@PathVariable Long id, @RequestParam String name, @AuthenticationPrincipal AppUser user) throws AccessDeniedException
+	public String editCategory(@PathVariable Long id, @RequestParam String category_name_edit, @AuthenticationPrincipal AppUser user) throws AccessDeniedException
 	{
-		_categoryService.editCategory(id, name, user);
+		_categoryService.editCategory(id, category_name_edit, user);
 		return "redirect:/index";
 	}
 
