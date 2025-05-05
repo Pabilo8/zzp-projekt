@@ -2,6 +2,7 @@ package pl.ttpsc.taskmanager.service;
 
 import org.springframework.stereotype.Service;
 import pl.ttpsc.taskmanager.model.AppUser;
+import pl.ttpsc.taskmanager.model.Status;
 import pl.ttpsc.taskmanager.model.Task;
 import pl.ttpsc.taskmanager.repository.TaskRepository;
 
@@ -33,14 +34,14 @@ public class TaskService {
 		}
 	}
 
-	public void updateStatus(Long id, Task.TaskStatus status, AppUser user) throws AccessDeniedException {
-		Task task = taskRepository.findById(id).orElse(null);
-		if (task != null && task.getUser().getId().equals(user.getId())) {
-			task.setStatus(status);
-			taskRepository.save(task);
-		} else if (task != null) {
-			throw new AccessDeniedException("Brak dostępu do tego zadania");
-		}
+	public void updateStatus(Long id, Status status, AppUser user) throws AccessDeniedException {
+	    Task task = taskRepository.findById(id).orElse(null);
+	    if (task != null && task.getUser().getId().equals(user.getId())) {
+	        task.setStatus(status);
+	        taskRepository.save(task);
+	    } else if (task != null) {
+	        throw new AccessDeniedException("Brak dostępu do tego zadania");
+	    }
 	}
 
 	public void deleteTask(Long id, AppUser user) throws AccessDeniedException {

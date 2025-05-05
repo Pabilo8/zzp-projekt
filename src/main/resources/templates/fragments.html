@@ -19,6 +19,9 @@
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${activeTab == 'tasks' ? 'active' : ''}" th:href="@{/tasks}">Zadania</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activeTab == 'statuses' ? 'active' : ''}" th:href="@{/statuses}">Statusy</a>
+                </li>
             </ul>
             <div class="d-flex">
                     <span class="navbar-text me-3" th:if="${#authentication != null}">

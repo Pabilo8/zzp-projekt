@@ -7,8 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pl.ttpsc.taskmanager.model.AppUser;
 import pl.ttpsc.taskmanager.model.Category;
+import pl.ttpsc.taskmanager.model.Status;
 import pl.ttpsc.taskmanager.model.Task;
 import pl.ttpsc.taskmanager.service.CategoryService;
+import pl.ttpsc.taskmanager.service.StatusService;
 import pl.ttpsc.taskmanager.service.TaskService;
 
 import java.nio.file.AccessDeniedException;
@@ -17,10 +19,12 @@ import java.nio.file.AccessDeniedException;
 public class TaskController {
 	private final TaskService taskService;
 	private final CategoryService categoryService;
+	private final StatusService statusService;
 
-	public TaskController(TaskService taskService, CategoryService categoryService) {
+	public TaskController(TaskService taskService, CategoryService categoryService, StatusService statusService) {
 		this.taskService = taskService;
 		this.categoryService = categoryService;
+		this.statusService = statusService;
 	}
 
 	@GetMapping("/tasks")
@@ -28,7 +32,7 @@ public class TaskController {
 	public String tasks(Model model, @AuthenticationPrincipal AppUser user) {
 		model.addAttribute("tasks", taskService.getTasksByUser(user));
 		model.addAttribute("categories", categoryService.getCategoriesByUser(user));
-		model.addAttribute("statuses", Task.TaskStatus.values());
+		model.addAttribute("statuses", statusService.getStatusesByUser(user));
 		return "tasks";
 	}
 
@@ -41,7 +45,7 @@ public class TaskController {
 			Task task = new Task();
 			task.setTitle(title);
 			task.setDescription(description);
-			task.setStatus(Task.TaskStatus.NEW);
+			task.setStatus(statusService.getStatusById(1L)); // Domyślny status
 			task.setUser(user);
 			task.setCategory(category);
 			taskService.saveTask(task);
@@ -51,9 +55,10 @@ public class TaskController {
 
 	@PostMapping("/task/status/{id}")
 	@Secured("ROLE_USER")
-	public String updateStatus(@PathVariable Long id, Task.TaskStatus status,
+	public String updateStatus(@PathVariable Long id, Long status,
 							   @AuthenticationPrincipal AppUser user) throws AccessDeniedException {
-		taskService.updateStatus(id, status, user);
+		Status statusObj = statusService.getStatusById(status);
+		taskService.updateStatus(id, statusObj, user);
 		return "redirect:/tasks";
 	}
 

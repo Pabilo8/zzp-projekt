@@ -14,23 +14,25 @@ public class Task {
 
 	private String description;
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private TaskStatus status;
-
+	// Usuwamy enum TaskStatus i dodajemy relację do encji Status
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private AppUser user;
+	@JoinColumn(name = "status_id")
+	private Status status;
 
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category category;
 
-	public enum TaskStatus {
-		NEW, IN_PROGRESS, COMPLETED
-	}
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private AppUser user;
 
-	// gettery i settery
+	// Usunięcie enuma TaskStatus
+	// public enum TaskStatus {
+	//     NEW, IN_PROGRESS, COMPLETED
+	// }
+
+	// Gettery i settery
 	public Long getId() { return id; }
 	public void setId(Long id) { this.id = id; }
 
@@ -40,12 +42,12 @@ public class Task {
 	public String getDescription() { return description; }
 	public void setDescription(String description) { this.description = description; }
 
-	public TaskStatus getStatus() { return status; }
-	public void setStatus(TaskStatus status) { this.status = status; }
-
-	public AppUser getUser() { return user; }
-	public void setUser(AppUser user) { this.user = user; }
+	public Status getStatus() { return status; }
+	public void setStatus(Status status) { this.status = status; }
 
 	public Category getCategory() { return category; }
 	public void setCategory(Category category) { this.category = category; }
+
+	public AppUser getUser() { return user; }
+	public void setUser(AppUser user) { this.user = user; }
 }

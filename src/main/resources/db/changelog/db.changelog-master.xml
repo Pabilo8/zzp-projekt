@@ -103,4 +103,57 @@
         </insert>
     </changeSet>
 
+    <changeSet id="5" author="BarMy49">
+        <!-- 1. Utworzenie tabeli statuses -->
+        <createTable tableName="statuses">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_status_user" references="users(id)" deleteCascade="true"/>
+            </column>
+        </createTable>
+
+        <!-- 2. Wstawienie domyślnych statusów dla użytkowników -->
+        <sql>
+            INSERT INTO statuses (name, user_id)
+            SELECT 'NEW', id FROM users;
+
+            INSERT INTO statuses (name, user_id)
+            SELECT 'IN_PROGRESS', id FROM users;
+
+            INSERT INTO statuses (name, user_id)
+            SELECT 'COMPLETED', id FROM users;
+        </sql>
+
+        <!-- 3. Dodanie kolumny status_id do tabeli tasks -->
+        <addColumn tableName="tasks">
+            <column name="status_id" type="BIGINT" defaultValueNumeric="null"/>
+        </addColumn>
+
+        <!-- 4. Przypisanie domyślnych statusów do zadań -->
+        <sql>
+            UPDATE tasks t SET t.status_id = (
+                SELECT s.id FROM statuses s
+                WHERE s.user_id = t.user_id AND s.name = t.status
+                LIMIT 1
+                )
+        </sql>
+
+        <!-- 5. Dodanie not null constraint i powiązania z tabelą statuses -->
+        <addNotNullConstraint tableName="tasks" columnName="status_id"/>
+        <addForeignKeyConstraint
+                constraintName="fk_tasks_status"
+                baseTableName="tasks"
+                baseColumnNames="status_id"
+                referencedTableName="statuses"
+                referencedColumnNames="id"/>
+
+        <!-- 6. Opcjonalnie - usunięcie starej kolumny status -->
+        <dropColumn tableName="tasks" columnName="status"/>
+    </changeSet>
+
 </databaseChangeLog>

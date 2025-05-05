@@ -62,11 +62,12 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="btn-group w-100">
-                            <button type="button" class="btn" ng-class="{'btn-primary': statusFilter === '', 'btn-outline-secondary': statusFilter !== ''}" ng-click="statusFilter = ''">Wszystkie</button>
-                            <button type="button" class="btn" ng-class="{'btn-primary': statusFilter === 'NEW', 'btn-outline-secondary': statusFilter !== 'NEW'}" ng-click="statusFilter = 'NEW'">Nowe</button>
-                            <button type="button" class="btn" ng-class="{'btn-primary': statusFilter === 'IN_PROGRESS', 'btn-outline-secondary': statusFilter !== 'IN_PROGRESS'}" ng-click="statusFilter = 'IN_PROGRESS'">W trakcie</button>
-                            <button type="button" class="btn" ng-class="{'btn-primary': statusFilter === 'COMPLETED', 'btn-outline-secondary': statusFilter !== 'COMPLETED'}" ng-click="statusFilter = 'COMPLETED'">Zakończone</button>
+                        <div class="input-group">
+                            <span class="input-group-text">Status:</span>
+                            <select class="form-select" ng-model="statusFilter">
+                                <option value="">Wszystkie statusy</option>
+                                <option ng-repeat="status in statuses" value="{{status.id}}">{{status.name}}</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -75,10 +76,10 @@
             <!-- Lista zadań -->
             <div class="card mb-3" ng-repeat="task in tasks | filter:searchText | filter:filterByCategory | filter:filterByStatus">
                 <div class="card-header d-flex justify-content-between align-items-center"
-                     ng-class="{'bg-light': task.status === 'NEW', 'bg-warning': task.status === 'IN_PROGRESS', 'bg-success text-white': task.status === 'COMPLETED'}">
+                     ng-class="getStatusClass(task.status)">
                     <h5 class="mb-0">{{task.title}}</h5>
-                    <span class="badge" ng-class="{'bg-secondary': task.status === 'NEW', 'bg-warning': task.status === 'IN_PROGRESS', 'bg-success': task.status === 'COMPLETED'}">
-                        {{task.status === 'NEW' ? 'Nowe' : task.status === 'IN_PROGRESS' ? 'W trakcie' : 'Zakończone'}}
+                    <span class="badge" ng-class="getStatusBadgeClass(task.status)">
+                        {{task.status.name}}
                     </span>
                 </div>
                 <div class="card-body">
@@ -90,11 +91,11 @@
                                 Zmień status
                             </button>
                             <ul class="dropdown-menu">
-                                <li ng-repeat="status in statuses" ng-if="status !== task.status">
+                                <li ng-repeat="status in statuses" ng-if="status.id !== task.status.id">
                                     <form th:action="@{/task/status/}" method="post" ng-submit="updateTaskStatus($event, task, status)">
-                                        <input type="hidden" name="status" value="{{status}}">
+                                        <input type="hidden" name="status" value="{{status.id}}">
                                         <button type="submit" class="dropdown-item">
-                                            {{status === 'NEW' ? 'Nowe' : status === 'IN_PROGRESS' ? 'W trakcie' : 'Zakończone'}}
+                                            {{status.name}}
                                         </button>
                                     </form>
                                 </li>
