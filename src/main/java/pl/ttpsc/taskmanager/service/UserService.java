@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.ttpsc.taskmanager.model.AppUser;
+import pl.ttpsc.taskmanager.model.Status;
 import pl.ttpsc.taskmanager.repository.UserRepository;
 
 import java.util.Optional;
@@ -14,11 +15,13 @@ import java.util.Optional;
 public class UserService implements UserDetailsService
 {
 	private final UserRepository _userRepository;
+	private final StatusService _statusService;
 
 	@Autowired
-	public UserService(UserRepository userRepository)
+	public UserService(UserRepository userRepository, StatusService statusService)
 	{
 		this._userRepository = userRepository;
+		this._statusService = statusService;
 	}
 
 	@Override
@@ -36,17 +39,28 @@ public class UserService implements UserDetailsService
 	public boolean saveUser(String username, String password)
 	{
 		if(userExists(username))
-		{
 			return false;
-		}
 
+		//Add a new user
 		AppUser user = new AppUser();
 		user.setUsername(username);
 		user.setPassword(password);
 		user.setRole("USER");
-
 		_userRepository.save(user);
 
+		//Add default status values for the user
+		addDefaultStatus(user,"NEW");
+		addDefaultStatus(user,"IN_PROGRESS");
+		addDefaultStatus(user,"COMPLETED");
+
 		return true;
+	}
+
+	private void addDefaultStatus(AppUser user, String statusName)
+	{
+		Status status = new Status();
+		status.setUser(user);
+		status.setName(statusName);
+		_statusService.saveStatus(status);
 	}
 }

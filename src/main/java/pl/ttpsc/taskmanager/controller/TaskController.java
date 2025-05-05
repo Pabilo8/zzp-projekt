@@ -53,6 +53,36 @@ public class TaskController {
 		return "redirect:/tasks";
 	}
 
+	@PostMapping("/task/edit/{id}")
+	@Secured("ROLE_USER")
+	public String editTask(@PathVariable Long id,
+						   String title,
+						   String description,
+						   Long category,
+						   @AuthenticationPrincipal AppUser user) throws AccessDeniedException {
+		// Get the task and verify ownership
+		Task task = taskService.getTaskById(id);
+		if (task == null || !task.getUser().getId().equals(user.getId())) {
+			throw new AccessDeniedException("Not authorized to edit this task");
+		}
+
+		// Get the category and verify ownership
+		Category catById = categoryService.getCategoryById(category);
+		if (catById == null || !catById.getUser().getId().equals(user.getId())) {
+			throw new AccessDeniedException("Not authorized to use this category");
+		}
+
+		// Update task properties
+		task.setTitle(title);
+		task.setDescription(description);
+		task.setCategory(catById);
+
+		// Save the updated task
+		taskService.saveTask(task);
+
+		return "redirect:/tasks";
+	}
+
 	@PostMapping("/task/status/{id}")
 	@Secured("ROLE_USER")
 	public String updateStatus(@PathVariable Long id, Long status,

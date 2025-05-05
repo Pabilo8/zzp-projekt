@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" ng-app="taskManagerApp">
-<head>
-    <meta charset="UTF-8">
-    <title>Task Manager - Zadania</title>
-    <script th:src="@{/webjars/angularjs/1.8.2/angular.min.js}"></script>
-    <script th:src="@{/js/app.js}"></script>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}"/>
-</head>
+<!-- Fragment Head -->
+<head th:replace="~{fragments :: head('Task Manager - Zadania', true)}"></head>
 <body>
 <!-- Dołączenie paska nawigacyjnego z parametrem -->
 <div th:replace="~{fragments :: navbar('tasks')}"></div>
@@ -15,10 +10,10 @@
     <!-- Przekazanie danych z Thymeleaf do AngularJS -->
     <div th:attr="ng-init='tasks=' + ${@objectMapper.writeValueAsString(tasks)} + '; categories=' + ${@objectMapper.writeValueAsString(categories)} + '; statuses=' + ${@objectMapper.writeValueAsString(statuses)} + ''" class="row">
         <div class="col-md-12 mt-4">
-            <h2>Zadania</h2>
+            <h2><div class="icon-list-todo"></div>Zadania</h2>
 
             <!-- Formularz dodawania zadania -->
-            <form th:action="@{/addTask}" method="post" class="mb-4 p-3 border rounded bg-light">
+            <form th:action="@{/addTask}" method="post" class="mb-4 p-3 border rounded">
                 <h4>Dodaj nowe zadanie</h4>
                 <div class="form-group mb-3">
                     <label for="title">Tytuł zadania:</label>
@@ -87,6 +82,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="badge bg-info">{{getCategoryName(task.category.id)}}</span>
                         <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-primary me-2" ng-click="openEditModal(task)">Edytuj</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
                                 Zmień status
                             </button>
@@ -114,9 +110,53 @@
             </div>
         </div>
     </div>
-</div>
 
-<!-- Dodanie Bootstrap JS do obsługi komponentów -->
-<script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js}"></script>
+    <!-- Modal do edycji zadania -->
+    <div class="modal fade" id="editTaskModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edytuj zadanie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/task/edit/}" method="post" ng-submit="updateTask($event)">
+                    <div class="modal-body">
+                        <div class="form-group mb-3">
+                            <label for="title">Tytuł:</label>
+                            <input type="text" class="form-control" id="title"
+                                   name="title" ng-model="editTaskTitle"
+                                   required ng-change="checkEditDuplicate()">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="description">Opis:</label>
+                            <textarea class="form-control" id="description"
+                                      name="description" ng-model="editTaskDescription"></textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="category">Kategoria:</label>
+                            <select class="form-select" id="category"
+                                    name="category" ng-model="editTaskCategoryId"
+                                    required ng-change="checkEditDuplicate()">
+                                <option value="">Wybierz kategorię</option>
+                                <option ng-repeat="category in categories" value="{{category.id}}">
+                                    {{category.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="id" ng-value="editTaskId">
+                        <div ng-if="isDuplicateEdit" class="alert alert-warning mt-2">
+                            Zadanie o podanym tytule już istnieje w wybranej kategorii!
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateEdit">Zapisz zmiany</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
 </body>
 </html>

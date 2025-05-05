@@ -91,7 +91,7 @@
             <column name="role" value="USER"/>
         </insert>
         <insert tableName="categories">
-            <column name="name" value="testuser"/>
+            <column name="name" value="testcategory"/>
             <column name="user_id" valueNumeric="1"/>
         </insert>
         <insert tableName="tasks">
@@ -104,7 +104,7 @@
     </changeSet>
 
     <changeSet id="5" author="BarMy49">
-        <!-- 1. Utworzenie tabeli statuses -->
+        <!-- Utworzenie tabeli statuses -->
         <createTable tableName="statuses">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -117,7 +117,7 @@
             </column>
         </createTable>
 
-        <!-- 2. Wstawienie domyślnych statusów dla użytkowników -->
+        <!-- Wstawienie domyślnych statusów dla użytkowników -->
         <sql>
             INSERT INTO statuses (name, user_id)
             SELECT 'NEW', id FROM users;
@@ -129,12 +129,12 @@
             SELECT 'COMPLETED', id FROM users;
         </sql>
 
-        <!-- 3. Dodanie kolumny status_id do tabeli tasks -->
+        <!-- Dodanie kolumny status_id do tabeli tasks -->
         <addColumn tableName="tasks">
             <column name="status_id" type="BIGINT" defaultValueNumeric="null"/>
         </addColumn>
 
-        <!-- 4. Przypisanie domyślnych statusów do zadań -->
+        <!-- Przypisanie domyślnych statusów do zadań -->
         <sql>
             UPDATE tasks t SET t.status_id = (
                 SELECT s.id FROM statuses s
@@ -143,7 +143,7 @@
                 )
         </sql>
 
-        <!-- 5. Dodanie not null constraint i powiązania z tabelą statuses -->
+        <!-- Dodanie not null constraint i powiązania z tabelą statuses -->
         <addNotNullConstraint tableName="tasks" columnName="status_id"/>
         <addForeignKeyConstraint
                 constraintName="fk_tasks_status"
@@ -152,7 +152,7 @@
                 referencedTableName="statuses"
                 referencedColumnNames="id"/>
 
-        <!-- 6. Opcjonalnie - usunięcie starej kolumny status -->
+        <!-- Usunięcie starej kolumny status (jeżeli istnieje) -->
         <dropColumn tableName="tasks" columnName="status"/>
     </changeSet>
 

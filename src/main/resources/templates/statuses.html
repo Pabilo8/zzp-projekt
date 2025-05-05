@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" ng-app="taskManagerApp">
-<head>
-    <meta charset="UTF-8">
-    <title>Task Manager - Statusy</title>
-    <script th:src="@{/webjars/angularjs/1.8.2/angular.min.js}"></script>
-    <script th:src="@{/js/app.js}"></script>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}"/>
-</head>
+<!-- Fragment Head -->
+<head th:replace="~{fragments :: head('Task Manager - Statusy', true)}"></head>
 <body>
 <!-- Dołączenie paska nawigacyjnego z parametrem -->
 <div th:replace="~{fragments :: navbar('statuses')}"></div>
@@ -15,7 +10,7 @@
     <!-- Przekazanie danych z Thymeleaf do AngularJS -->
     <div th:attr="ng-init='statuses=' + ${@objectMapper.writeValueAsString(statuses)} + ''" class="row">
         <div class="col-md-12 mt-4">
-            <h2>Statusy</h2>
+            <h2><div class="icon-circle-ellipsis"></div>Statusy</h2>
 
             <!-- Formularz dodawania statusu -->
             <form th:action="@{/addStatus}" method="post" class="mb-4">
@@ -24,13 +19,19 @@
                            placeholder="Nazwa nowego statusu" required ng-change="checkAddDuplicate()">
                     <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateAdd">Dodaj status</button>
                 </div>
-                <div ng-if="isDuplicateAdd" class="alert alert-warning mt-2">
-                    Status o podanej nazwie już istnieje!
-                </div>
+            </form>
+
+            <div>
                 <div th:if="${addStatusError}" class="alert alert-danger mt-2">
                     Nie udało się dodać statusu
                 </div>
-            </form>
+                <div th:if="${deleteStatusError}" class="alert alert-danger mt-2">
+                    Nie można usunąć. Status jest w użyciu.
+                </div>
+                <div th:if="${editStatusError}" class="alert alert-danger mt-2">
+                    Nie udało się zmodyfikować statusu
+                </div>
+            </div>
 
             <!-- Lista statusów z opcją usuwania -->
             <ul class="list-group">
@@ -86,8 +87,5 @@
         </div>
     </div>
 </div>
-
-<!-- Dodanie Bootstrap JS do obsługi modali -->
-<script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
