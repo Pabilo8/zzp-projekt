@@ -42,8 +42,12 @@
             <!-- Formularz dodawania kategorii -->
             <form th:action="@{/addCategory}" method="post" class="mb-4">
                 <div class="input-group">
-                    <input type="text" class="form-control" name="category_name_add" ng-model="newCategory" placeholder="Nazwa nowej kategorii" required>
-                    <button type="submit" class="btn btn-primary">Dodaj kategorię</button>
+                    <input type="text" class="form-control" name="category_name_add" ng-model="newCategory"
+                           placeholder="Nazwa nowej kategorii" required ng-change="checkAddDuplicate()">
+                    <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateAdd">Dodaj kategorię</button>
+                </div>
+                <div ng-if="isDuplicateAdd" class="alert alert-warning mt-2">
+                    Kategoria o podanej nazwie już istnieje!
                 </div>
                 <div th:if="${addCategoryError}" class="alert alert-danger mt-2">
                     Nie udało się dodać kategorii
@@ -83,13 +87,18 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="category_name_edit">Nazwa kategorii:</label>
-                            <input type="text" class="form-control" id="category_name_edit" name="category_name_edit" ng-model="editCategoryName" required>
+                            <input type="text" class="form-control" id="category_name_edit"
+                                   name="category_name_edit" ng-model="editCategoryName"
+                                   required ng-change="checkEditDuplicate()">
                             <input type="hidden" name="id" ng-value="editCategoryId">
+                        </div>
+                        <div ng-if="isDuplicateEdit" class="alert alert-warning mt-2">
+                            Kategoria o podanej nazwie już istnieje!
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                        <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                        <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateEdit">Zapisz zmiany</button>
                     </div>
                 </form>
             </div>
