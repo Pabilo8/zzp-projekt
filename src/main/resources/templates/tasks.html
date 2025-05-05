@@ -8,12 +8,16 @@
 
 <div class="container" ng-controller="TaskController">
     <!-- Przekazanie danych z Thymeleaf do AngularJS -->
-    <div th:attr="ng-init='tasks=' + ${@objectMapper.writeValueAsString(tasks)} + '; categories=' + ${@objectMapper.writeValueAsString(categories)} + '; statuses=' + ${@objectMapper.writeValueAsString(statuses)} + ''" class="row">
+    <div th:attr="ng-init='tasks=' + ${@objectMapper.writeValueAsString(tasks)} + '; categories=' + ${@objectMapper.writeValueAsString(categories)} + '; statuses=' + ${@objectMapper.writeValueAsString(statuses)} + ''"
+         class="row">
         <div class="col-md-12 mt-4">
-            <h2><div class="icon-list-todo"></div>Zadania</h2>
+            <h2>
+                <div class="icon-list-todo"></div>
+                Zadania
+            </h2>
 
             <!-- Formularz dodawania zadania -->
-            <form th:action="@{/addTask}" method="post" class="mb-4 p-3 border rounded">
+            <form th:action="@{/addTask}" method="post" class="form-horizontal mb-4 p-3 border rounded">
                 <h4>Dodaj nowe zadanie</h4>
                 <div class="form-group mb-3">
                     <label for="title">Tytuł zadania:</label>
@@ -49,10 +53,12 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Szukaj zadania..." ng-model="searchText">
+                            <input type="text" class="form-control" placeholder="Szukaj zadania..."
+                                   ng-model="searchText">
                             <select class="form-select" ng-model="categoryFilter">
                                 <option value="">Wszystkie kategorie</option>
-                                <option ng-repeat="category in categories" value="{{category.id}}">{{category.name}}</option>
+                                <option ng-repeat="category in categories" value="{{category.id}}">{{category.name}}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -69,9 +75,9 @@
             </div>
 
             <!-- Lista zadań -->
-            <div class="card mb-3" ng-repeat="task in tasks | filter:searchText | filter:filterByCategory | filter:filterByStatus">
-                <div class="card-header d-flex justify-content-between align-items-center"
-                     ng-class="getStatusClass(task.status)">
+            <div class="card mb-3"
+                 ng-repeat="task in tasks | filter:filterTasks">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">{{task.title}}</h5>
                     <span class="badge" ng-class="getStatusBadgeClass(task.status)">
                         {{task.status.name}}
@@ -80,15 +86,18 @@
                 <div class="card-body">
                     <p class="card-text">{{task.description}}</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <span class="badge bg-info">{{getCategoryName(task.category.id)}}</span>
+                        <span class="badge bg-secondary">Kategoria: {{ task.category.name }}</span>
                         <div class="btn-group">
-                            <button class="btn btn-sm btn-outline-primary me-2" ng-click="openEditModal(task)">Edytuj</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <button class="btn btn-sm btn-outline-primary me-2" ng-click="openEditModal(task)">Edytuj
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                    data-bs-toggle="dropdown">
                                 Zmień status
                             </button>
                             <ul class="dropdown-menu">
                                 <li ng-repeat="status in statuses" ng-if="status.id !== task.status.id">
-                                    <form th:action="@{/task/status/}" method="post" ng-submit="updateTaskStatus($event, task, status)">
+                                    <form th:action="@{/task/status/}" method="post"
+                                          ng-submit="updateTaskStatus($event, task, status)">
                                         <input type="hidden" name="status" value="{{status.id}}">
                                         <button type="submit" class="dropdown-item">
                                             {{status.name}}
@@ -96,7 +105,8 @@
                                     </form>
                                 </li>
                             </ul>
-                            <form th:action="@{/task/delete/}" method="post" style="display:inline;" ng-submit="deleteTask($event, task)">
+                            <form th:action="@{/task/delete/}" method="post" style="display:inline;"
+                                  ng-submit="deleteTask($event, task)">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
                             </form>
                         </div>
@@ -105,7 +115,8 @@
             </div>
 
             <!-- Brak zadań -->
-            <div ng-if="(tasks | filter:searchText | filter:filterByCategory | filter:filterByStatus).length == 0" class="alert alert-info mt-2">
+            <div ng-if="(tasks | filter:searchText | filter:filterByCategory | filter:filterByStatus).length == 0"
+                 class="alert alert-info mt-2">
                 Brak zadań do wyświetlenia
             </div>
         </div>
@@ -150,7 +161,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                        <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateEdit">Zapisz zmiany</button>
+                        <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateEdit">Zapisz zmiany
+                        </button>
                     </div>
                 </form>
             </div>
