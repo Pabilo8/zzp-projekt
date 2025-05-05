@@ -1,26 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<!-- Fragment head z tytułem i parametrem, który załącza angular.js -->
+<head th:fragment="head(title, includeAngular)">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Task Manager</title>
+    <!-- Załącz AngularJS -->
+    <script th:if="${includeAngular}" th:src="@{/webjars/angularjs/1.8.2/angular.min.js}"></script>
+    <script th:if="${includeAngular}" th:src="@{/js/app.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/webjars/lucide-static/0.468.0/font/lucide.css}"/>
+    <style>
+        div[class^="icon-"] {
+            float: left;
+            margin-right: 4px;
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}"/>
+    <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js}"></script>
 </head>
 <body>
 <!-- Fragment paska nawigacyjnego z parametrem activeTab -->
 <nav th:fragment="navbar(activeTab)" class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
     <div class="container">
         <a class="navbar-brand" href="#">Task Manager</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" th:classappend="${activeTab == 'categories' ? 'active' : ''}" th:href="@{/index}">Kategorie</a>
+                    <a class="nav-link" th:classappend="${activeTab == 'categories' ? 'active' : ''}"
+                       th:href="@{/index}">
+                        <div class="icon-folders"></div>
+                        Kategorie
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:classappend="${activeTab == 'tasks' ? 'active' : ''}" th:href="@{/tasks}">Zadania</a>
+                    <a class="nav-link" th:classappend="${activeTab == 'tasks' ? 'active' : ''}" th:href="@{/tasks}">
+                        <div class="icon-list-todo"></div>
+                        Zadania
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:classappend="${activeTab == 'statuses' ? 'active' : ''}" th:href="@{/statuses}">Statusy</a>
+                    <a class="nav-link" th:classappend="${activeTab == 'statuses' ? 'active' : ''}"
+                       th:href="@{/statuses}">
+                        <div class="icon-circle-ellipsis"></div>
+                        Statusy
+                    </a>
                 </li>
             </ul>
             <div class="d-flex">

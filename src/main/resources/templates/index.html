@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" ng-app="taskManagerApp">
-<head>
-    <meta charset="UTF-8">
-    <title>Task Manager</title>
-    <script th:src="@{/webjars/angularjs/1.8.2/angular.min.js}"></script>
-    <script th:src="@{/js/app.js}"></script>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}"/>
-</head>
+<!-- Fragment Head -->
+<head th:replace="~{fragments :: head('Task Manager - Kategorie', true)}"></head>
 <body>
 <!-- Dołączenie paska nawigacyjnego z parametrem -->
 <div th:replace="~{fragments :: navbar('categories')}"></div>
@@ -15,7 +10,7 @@
     <!-- Przekazanie danych z Thymeleaf do AngularJS -->
     <div th:attr="ng-init='categories=' + ${@objectMapper.writeValueAsString(categories)} + ''" class="row">
         <div class="col-md-12 mt-4">
-            <h2>Kategorie</h2>
+            <h2><div class="icon-folders"></div>Kategorie</h2>
 
             <!-- Formularz dodawania kategorii -->
             <form th:action="@{/addCategory}" method="post" class="mb-4">
@@ -34,11 +29,14 @@
 
             <!-- Lista kategorii z opcją usuwania -->
             <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between align-items-center" ng-repeat="category in categories">
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                    ng-repeat="category in categories">
                     <span>{{category.name}}</span>
                     <div>
-                        <button class="btn btn-sm btn-outline-primary me-2" ng-click="openEditModal(category)">Edytuj</button>
-                        <form th:action="@{/category/delete/}" method="post" style="display:inline;" ng-submit="deleteCategory($event, category)">
+                        <button class="btn btn-sm btn-outline-primary me-2" ng-click="openEditModal(category)">Edytuj
+                        </button>
+                        <form th:action="@{/category/delete/}" method="post" style="display:inline;"
+                              ng-submit="deleteCategory($event, category)">
                             <input type="hidden" name="id" ng-value="category.id">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
                         </form>
@@ -76,15 +74,13 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                        <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateEdit">Zapisz zmiany</button>
+                        <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateEdit">Zapisz zmiany
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Dodanie Bootstrap JS do obsługi modali -->
-<script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
