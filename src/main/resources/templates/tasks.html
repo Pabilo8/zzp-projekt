@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" ng-app="taskManagerApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager - Zadania</title>
+    <script th:src="@{/webjars/angularjs/1.8.2/angular.min.js}"></script>
+    <script th:src="@{/js/app.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}"/>
+</head>
+<body>
+<!-- Dołączenie paska nawigacyjnego z parametrem -->
+<div th:replace="~{fragments :: navbar('tasks')}"></div>
+
+<div class="container" ng-controller="TaskController">
+    <!-- Przekazanie danych z Thymeleaf do AngularJS -->
+    <div th:attr="ng-init='tasks=' + ${@objectMapper.writeValueAsString(tasks)} + '; categories=' + ${@objectMapper.writeValueAsString(categories)} + '; statuses=' + ${@objectMapper.writeValueAsString(statuses)} + ''" class="row">
+        <div class="col-md-12 mt-4">
+            <h2>Zadania</h2>
+
+            <!-- Formularz dodawania zadania -->
+            <form th:action="@{/addTask}" method="post" class="mb-4 p-3 border rounded bg-light">
+                <h4>Dodaj nowe zadanie</h4>
+                <div class="form-group mb-3">
+                    <label for="title">Tytuł zadania:</label>
+                    <input type="text" class="form-control" id="title" name="title"
+                           ng-model="newTask.title" required ng-change="checkAddDuplicate()">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="description">Opis zadania:</label>
+                    <textarea class="form-control" id="description" name="description"
+                              ng-model="newTask.description" rows="3"></textarea>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="categoryId">Kategoria:</label>
+                    <select class="form-select" id="categoryId" name="categoryId"
+                            ng-model="newTask.categoryId" required ng-change="checkAddDuplicate()">
+                        <option value="" disabled selected>Wybierz kategorię</option>
+                        <option ng-repeat="category in categories" value="{{category.id}}">{{category.name}}</option>
+                    </select>
+                </div>
+                <div class="alert alert-warning" ng-if="categories.length == 0">
+                    Aby dodać zadanie, najpierw utwórz kategorię na stronie Kategorie.
+                </div>
+                <!-- Komunikat o duplikacie -->
+                <div ng-if="isDuplicateAdd" class="alert alert-warning mt-2">
+                    Zadanie o podanej nazwie już istnieje w systemie!
+                </div>
+                <button type="submit" class="btn btn-primary"
+                        ng-disabled="categories.length == 0 || isDuplicateAdd">Dodaj zadanie</button>
+            </form>
+
+            <!-- Filtrowanie zadań -->
+            <div class="mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Szukaj zadania..." ng-model="searchText">
+                            <select class="form-select" ng-model="categoryFilter">
+                                <option value="">Wszystkie kategorie</option>
+                                <option ng-repeat="category in categories" value="{{category.id}}">{{category.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="btn-group w-100">
+                            <button type="button" class="btn" ng-class="{'btn-primary': statusFilter === '', 'btn-outline-secondary': statusFilter !== ''}" ng-click="statusFilter = ''">Wszystkie</button>
+                            <button type="button" class="btn" ng-class="{'btn-primary': statusFilter === 'NEW', 'btn-outline-secondary': statusFilter !== 'NEW'}" ng-click="statusFilter = 'NEW'">Nowe</button>
+                            <button type="button" class="btn" ng-class="{'btn-primary': statusFilter === 'IN_PROGRESS', 'btn-outline-secondary': statusFilter !== 'IN_PROGRESS'}" ng-click="statusFilter = 'IN_PROGRESS'">W trakcie</button>
+                            <button type="button" class="btn" ng-class="{'btn-primary': statusFilter === 'COMPLETED', 'btn-outline-secondary': statusFilter !== 'COMPLETED'}" ng-click="statusFilter = 'COMPLETED'">Zakończone</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista zadań -->
+            <div class="card mb-3" ng-repeat="task in tasks | filter:searchText | filter:filterByCategory | filter:filterByStatus">
+                <div class="card-header d-flex justify-content-between align-items-center"
+                     ng-class="{'bg-light': task.status === 'NEW', 'bg-warning': task.status === 'IN_PROGRESS', 'bg-success text-white': task.status === 'COMPLETED'}">
+                    <h5 class="mb-0">{{task.title}}</h5>
+                    <span class="badge" ng-class="{'bg-secondary': task.status === 'NEW', 'bg-warning': task.status === 'IN_PROGRESS', 'bg-success': task.status === 'COMPLETED'}">
+                        {{task.status === 'NEW' ? 'Nowe' : task.status === 'IN_PROGRESS' ? 'W trakcie' : 'Zakończone'}}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{task.description}}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-info">{{getCategoryName(task.category.id)}}</span>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                Zmień status
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="status in statuses" ng-if="status !== task.status">
+                                    <form th:action="@{/task/status/}" method="post" ng-submit="updateTaskStatus($event, task, status)">
+                                        <input type="hidden" name="status" value="{{status}}">
+                                        <button type="submit" class="dropdown-item">
+                                            {{status === 'NEW' ? 'Nowe' : status === 'IN_PROGRESS' ? 'W trakcie' : 'Zakończone'}}
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                            <form th:action="@{/task/delete/}" method="post" style="display:inline;" ng-submit="deleteTask($event, task)">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brak zadań -->
+            <div ng-if="(tasks | filter:searchText | filter:filterByCategory | filter:filterByStatus).length == 0" class="alert alert-info mt-2">
+                Brak zadań do wyświetlenia
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dodanie Bootstrap JS do obsługi komponentów -->
+<script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

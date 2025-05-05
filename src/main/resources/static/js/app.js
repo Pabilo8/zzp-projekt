@@ -72,3 +72,80 @@ app.controller('CategoryController', function($scope, $http, $timeout) {
         form.submit();
     };
 });
+
+app.controller('TaskController', function($scope, $timeout) {
+    // Inicjalizacja modelu nowego zadania
+    $scope.newTask = {
+        title: '',
+        description: '',
+        categoryId: ''
+    };
+
+    // Filtry
+    $scope.searchText = '';
+    $scope.categoryFilter = '';
+    $scope.statusFilter = '';
+
+    // Filtrowanie po kategorii
+    $scope.filterByCategory = function(task) {
+        if (!$scope.categoryFilter) return true;
+        return task.category.id.toString() === $scope.categoryFilter;
+    };
+
+    // Filtrowanie po statusie
+    $scope.filterByStatus = function(task) {
+        if (!$scope.statusFilter) return true;
+        return task.status === $scope.statusFilter;
+    };
+
+    // Pobieranie nazwy kategorii na podstawie ID
+    $scope.getCategoryName = function(categoryId) {
+        for (var i = 0; i < $scope.categories.length; i++) {
+            if ($scope.categories[i].id === categoryId) {
+                return $scope.categories[i].name;
+            }
+        }
+        return "Nieznana kategoria";
+    };
+
+    // Aktualizacja statusu zadania
+    $scope.updateTaskStatus = function(event, task, status) {
+        event.preventDefault();
+        var form = event.target;
+        form.action = form.action + task.id;
+        form.submit();
+    };
+
+    // Usuwanie zadania
+    $scope.deleteTask = function(event, task) {
+        event.preventDefault();
+        if (confirm('Czy na pewno chcesz usunąć to zadanie?')) {
+            var form = event.target;
+            form.action = form.action + task.id;
+            form.submit();
+        }
+    };
+
+    // Zmienne do kontrolowania komunikatów o duplikatach
+    $scope.isDuplicateAdd = false;
+
+    // Funkcja sprawdzająca czy nazwa zadania już istnieje w dowolnej kategorii
+    $scope.checkDuplicateTitle = function(title, categoryId, excludeId) {
+        if (!title) return false;
+
+        return $scope.tasks.some(function(task) {
+            // Przy edycji pomijamy zadanie, które edytujemy
+            if (excludeId && task.id === excludeId) return false;
+            // Sprawdzamy duplikat we wszystkich kategoriach
+            return task.title.toLowerCase() === title.toLowerCase();
+        });
+    };
+
+    // Sprawdzanie duplikatu przy dodawaniu
+    $scope.checkAddDuplicate = function() {
+        $scope.isDuplicateAdd = $scope.checkDuplicateTitle(
+                $scope.newTask.title,
+                $scope.newTask.categoryId
+        );
+    };
+});
