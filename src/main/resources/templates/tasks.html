@@ -72,7 +72,10 @@
             <div class="card mb-3" ng-repeat="task in tasks | filter:searchText | filter:filterByCategory | filter:filterByStatus">
                 <div class="card-header d-flex justify-content-between align-items-center"
                      ng-class="getStatusClass(task.status)">
-                    <h5 class="mb-0">{{task.title}}</h5>
+                    <h5 class="mb-0">
+                        <span class="badge bg-info">{{getCategoryName(task.category.id)}}</span>
+                        {{task.title}}
+                    </h5>
                     <span class="badge" ng-class="getStatusBadgeClass(task.status)">
                         {{task.status.name}}
                     </span>
@@ -80,8 +83,8 @@
                 <div class="card-body">
                     <p class="card-text">{{task.description}}</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <span class="badge bg-info">{{getCategoryName(task.category.id)}}</span>
                         <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-primary me-2" ng-click="openEditModal(task)">Edytuj</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
                                 Zmień status
                             </button>
@@ -109,6 +112,53 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal do edycji zadania -->
+    <div class="modal fade" id="editTaskModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edytuj zadanie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/task/edit/}" method="post" ng-submit="updateTask($event)">
+                    <div class="modal-body">
+                        <div class="form-group mb-3">
+                            <label for="title">Tytuł:</label>
+                            <input type="text" class="form-control" id="title"
+                                   name="title" ng-model="editTaskTitle"
+                                   required ng-change="checkEditDuplicate()">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="description">Opis:</label>
+                            <textarea class="form-control" id="description"
+                                      name="description" ng-model="editTaskDescription"></textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="category">Kategoria:</label>
+                            <select class="form-select" id="category"
+                                    name="category" ng-model="editTaskCategoryId"
+                                    required ng-change="checkEditDuplicate()">
+                                <option value="">Wybierz kategorię</option>
+                                <option ng-repeat="category in categories" value="{{category.id}}">
+                                    {{category.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="id" ng-value="editTaskId">
+                        <div ng-if="isDuplicateEdit" class="alert alert-warning mt-2">
+                            Zadanie o podanym tytule już istnieje w wybranej kategorii!
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateEdit">Zapisz zmiany</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>
