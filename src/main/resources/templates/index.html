@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" ng-app="taskManagerApp">
-<!-- Fragment Head -->
+<!-- Head Fragment -->
 <head th:replace="~{fragments :: head('Task Manager - Kategorie', true)}"></head>
 <body>
-<!-- Dołączenie paska nawigacyjnego z parametrem -->
+<!-- NavBar Fragment -->
 <div th:replace="~{fragments :: navbar('categories')}"></div>
 
 <div class="container" ng-controller="CategoryController">
-    <!-- Przekazanie danych z Thymeleaf do AngularJS -->
+    <!-- Pass Thymeleaf data to AngularJS -->
     <div th:attr="ng-init='categories=' + ${@objectMapper.writeValueAsString(categories)} + ''" class="row">
         <div class="col-md-12 mt-4">
             <h2><div class="icon-folders"></div>Kategorie</h2>
 
-            <!-- Formularz dodawania kategorii -->
+            <!-- Category addition form -->
             <form th:action="@{/addCategory}" method="post" class="mb-4">
                 <div class="input-group">
                     <input type="text" class="form-control" name="category_name_add" ng-model="newCategory"
@@ -27,7 +27,7 @@
                 </div>
             </form>
 
-            <!-- Lista kategorii z opcją usuwania -->
+            <!-- List of Categories with deletion buttons -->
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-between align-items-center"
                     ng-repeat="category in categories">
@@ -44,14 +44,14 @@
                 </li>
             </ul>
 
-            <!-- Brak kategorii -->
+            <!-- No categories exist -->
             <div ng-if="categories.length == 0" class="alert alert-info mt-2">
                 Brak kategorii do wyświetlenia
             </div>
         </div>
     </div>
 
-    <!-- Modal do edycji kategorii - jeden dla wszystkich kategorii -->
+    <!-- Category edit modal -->
     <div class="modal fade" id="editModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">

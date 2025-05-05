@@ -10,6 +10,8 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long>
 {
 	List<Task> findAllByUser(AppUser user);
+
 	boolean existsByStatus(Status status); // zmiana z Task.TaskStatus na Status
+
 	boolean existsByStatusId(Long statusId); // dodana metoda
 }

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" ng-app="taskManagerApp">
-<!-- Fragment Head -->
+<!-- Head Fragment -->
 <head th:replace="~{fragments :: head('Task Manager - Zadania', true)}"></head>
 <body>
-<!-- Dołączenie paska nawigacyjnego z parametrem -->
+<!-- NavBar Fragment -->
 <div th:replace="~{fragments :: navbar('tasks')}"></div>
 
 <div class="container" ng-controller="TaskController">
-    <!-- Przekazanie danych z Thymeleaf do AngularJS -->
+    <!-- Pass Thymeleaf data to AngularJS -->
     <div th:attr="ng-init='tasks=' + ${@objectMapper.writeValueAsString(tasks)} + '; categories=' + ${@objectMapper.writeValueAsString(categories)} + '; statuses=' + ${@objectMapper.writeValueAsString(statuses)} + ''"
          class="row">
         <div class="col-md-12 mt-4">
@@ -16,7 +16,7 @@
                 Zadania
             </h2>
 
-            <!-- Formularz dodawania zadania -->
+            <!-- Task Adding form -->
             <form th:action="@{/addTask}" method="post" class="form-horizontal mb-4 p-3 border rounded">
                 <h4>Dodaj nowe zadanie</h4>
                 <div class="form-group mb-3">
@@ -40,7 +40,7 @@
                 <div class="alert alert-warning" ng-if="categories.length == 0">
                     Aby dodać zadanie, najpierw utwórz kategorię na stronie Kategorie.
                 </div>
-                <!-- Komunikat o duplikacie -->
+                <!-- Duplicate message -->
                 <div ng-if="isDuplicateAdd" class="alert alert-warning mt-2">
                     Zadanie o podanej nazwie już istnieje w systemie!
                 </div>
@@ -48,7 +48,7 @@
                         ng-disabled="categories.length == 0 || isDuplicateAdd">Dodaj zadanie</button>
             </form>
 
-            <!-- Filtrowanie zadań -->
+            <!-- Filter tasks -->
             <div class="mb-4">
                 <div class="row">
                     <div class="col-md-6">
@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <!-- Lista zadań -->
+            <!-- Task list -->
             <div class="card mb-3"
                  ng-repeat="task in tasks | filter:filterTasks">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -114,7 +114,7 @@
                 </div>
             </div>
 
-            <!-- Brak zadań -->
+            <!-- No tasks message -->
             <div ng-if="(tasks | filter:searchText | filter:filterByCategory | filter:filterByStatus).length == 0"
                  class="alert alert-info mt-2">
                 Brak zadań do wyświetlenia
@@ -122,7 +122,7 @@
         </div>
     </div>
 
-    <!-- Modal do edycji zadania -->
+    <!-- Edit task modal -->
     <div class="modal fade" id="editTaskModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">

@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!-- Fragment head z tytułem i parametrem, który załącza angular.js -->
+<!-- Add head tag with title, meta and imports -->
 <head th:fragment="head(title, includeAngular)">
+    <!-- Metadata -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${title}">Task Manager</title>
-    <!-- Załącz AngularJS -->
+    <meta name="description" content="Task Manager Application">
+    <meta name="author" content="TTPSC">
+
+    <!-- Add AngularJS -->
     <script th:if="${includeAngular}" th:src="@{/webjars/angularjs/1.8.2/angular.min.js}"></script>
     <script th:if="${includeAngular}" th:src="@{/js/app.js}"></script>
 
+    <!-- Add Lucide icons -->
     <link rel="stylesheet" th:href="@{/webjars/lucide-static/0.468.0/font/lucide.css}"/>
+    <!-- Add offset for icons -->
     <style>
         div[class^="icon-"] {
             float: left;
             margin-right: 4px;
         }
     </style>
+
+    <!-- Add Bootstrap CSS and JS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"/>
     <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
 </head>
 <body>
-<!-- Fragment paska nawigacyjnego z parametrem activeTab -->
+<!-- NavBar fragment, activeTab is the name of the currently active tab -->
 <nav th:fragment="navbar(activeTab)" class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
     <div class="container">
         <a class="navbar-brand" href="#">Task Manager</a>
@@ -79,11 +87,12 @@
                         </li>
                     </ul>
                 </div>
-                <!-- Zalogowany użytkownik -->
+                <!-- Logged user name -->
                 <span class="navbar-text me-3" th:if="${#authentication != null}">
                     <div class="icon-user"></div>
                     <strong th:text="${#authentication.name}"></strong>
                     </span>
+                <!-- Logout button -->
                 <form th:action="@{/logout}" method="post">
                     <button type="submit" class="btn btn-outline-light">Wyloguj</button>
                 </form>

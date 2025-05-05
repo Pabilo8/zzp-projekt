@@ -14,7 +14,6 @@ import pl.ttpsc.taskmanager.service.UserService;
 @EnableWebSecurity
 public class SecurityConfig
 {
-
 	private final UserService _userService;
 
 	public SecurityConfig(UserService userService)
@@ -27,7 +26,7 @@ public class SecurityConfig
 	{
 		http
 				.authorizeHttpRequests((requests) -> requests
-						.requestMatchers("/login", "/register","/webjars/**").permitAll()
+						.requestMatchers("/login", "/register", "/webjars/**").permitAll()
 						.requestMatchers("/index", "/", "/h2-console/**").authenticated()
 						.anyRequest().authenticated()
 				).formLogin((form) -> form

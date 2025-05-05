@@ -6,7 +6,9 @@ import pl.ttpsc.taskmanager.model.Status;
 
 import java.util.List;
 
-public interface StatusRepository extends JpaRepository<Status, Long> {
+public interface StatusRepository extends JpaRepository<Status, Long>
+{
 	List<Status> findAllByUser(AppUser user);
+
 	boolean existsByNameAndUser(String name, AppUser user);
 }

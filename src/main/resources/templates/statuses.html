@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" ng-app="taskManagerApp">
-<!-- Fragment Head -->
+<!-- Head Fragment -->
 <head th:replace="~{fragments :: head('Task Manager - Statusy', true)}"></head>
 <body>
-<!-- Dołączenie paska nawigacyjnego z parametrem -->
+<!-- NavBar Fragment -->
 <div th:replace="~{fragments :: navbar('statuses')}"></div>
 
 <div class="container" ng-controller="StatusController">
-    <!-- Przekazanie danych z Thymeleaf do AngularJS -->
+    <!-- Pass Thymeleaf data to AngularJS -->
     <div th:attr="ng-init='statuses=' + ${@objectMapper.writeValueAsString(statuses)} + ''" class="row">
         <div class="col-md-12 mt-4">
-            <h2><div class="icon-circle-ellipsis"></div>Statusy</h2>
+            <h2>
+                <div class="icon-circle-ellipsis"></div>
+                Statusy
+            </h2>
 
-            <!-- Formularz dodawania statusu -->
+            <!-- Status add form -->
             <form th:action="@{/addStatus}" method="post" class="mb-4">
                 <div class="input-group">
                     <input type="text" class="form-control" name="status_name_add" ng-model="newStatus"
@@ -33,13 +36,15 @@
                 </div>
             </div>
 
-            <!-- Lista statusów z opcją usuwania -->
+            <!-- Status list with delete option -->
             <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between align-items-center" ng-repeat="status in statuses">
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                    ng-repeat="status in statuses">
                     <span>{{status.name}}</span>
                     <div>
                         <button class="btn btn-sm btn-outline-primary me-2" ng-click="openEditModal(status)">Edytuj</button>
-                        <form th:action="@{/status/delete/}" method="post" style="display:inline;" ng-submit="deleteStatus($event, status)">
+                        <form th:action="@{/status/delete/}" method="post" style="display:inline;"
+                              ng-submit="deleteStatus($event, status)">
                             <input type="hidden" name="id" ng-value="status.id">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
                         </form>
@@ -47,14 +52,14 @@
                 </li>
             </ul>
 
-            <!-- Brak statusów -->
+            <!-- No statuses message -->
             <div ng-if="statuses.length == 0" class="alert alert-info mt-2">
                 Brak statusów do wyświetlenia
             </div>
         </div>
     </div>
 
-    <!-- Modal do edycji statusu -->
+    <!-- Status edit modal -->
     <div class="modal fade" id="editModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">

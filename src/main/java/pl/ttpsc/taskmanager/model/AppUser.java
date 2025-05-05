@@ -11,7 +11,6 @@ import java.util.List;
 @Table(name = "users")
 public class AppUser implements UserDetails
 {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -37,15 +36,15 @@ public class AppUser implements UserDetails
 		return password;
 	}
 
+	public void setPassword(String password)
+	{
+		this.password = password;
+	}
+
 	@Override
 	public String getUsername()
 	{
 		return username;
-	}
-
-	public Long getId()
-	{
-		return this.id;
 	}
 
 	public void setUsername(String username)
@@ -53,9 +52,9 @@ public class AppUser implements UserDetails
 		this.username = username;
 	}
 
-	public void setPassword(String password)
+	public Long getId()
 	{
-		this.password = password;
+		return this.id;
 	}
 
 	public void setRole(String role)

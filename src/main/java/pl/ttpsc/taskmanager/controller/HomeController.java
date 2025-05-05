@@ -4,7 +4,10 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.ttpsc.taskmanager.model.AppUser;
 import pl.ttpsc.taskmanager.model.Category;
@@ -15,7 +18,6 @@ import java.nio.file.AccessDeniedException;
 @Controller
 public class HomeController
 {
-
 	private final CategoryService _categoryService;
 
 	public HomeController(CategoryService categoryService)
@@ -41,7 +43,8 @@ public class HomeController
 
 		boolean completed = _categoryService.saveCategory(category);
 
-		if(!completed){
+		if(!completed)
+		{
 			redirectAttributes.addFlashAttribute("addCategoryError", true);
 		}
 

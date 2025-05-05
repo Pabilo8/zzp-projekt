@@ -10,47 +10,59 @@ import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
-public class StatusService {
+public class StatusService
+{
 	private final StatusRepository statusRepository;
 	private final TaskRepository taskRepository;
 
-	public StatusService(StatusRepository statusRepository, TaskRepository taskRepository) {
+	public StatusService(StatusRepository statusRepository, TaskRepository taskRepository)
+	{
 		this.statusRepository = statusRepository;
 		this.taskRepository = taskRepository;
 	}
 
-	public List<Status> getStatusesByUser(AppUser user) {
+	public List<Status> getStatusesByUser(AppUser user)
+	{
 		return statusRepository.findAllByUser(user);
 	}
 
-	public Status getStatusById(Long id) {
+	public Status getStatusById(Long id)
+	{
 		return statusRepository.findById(id).orElse(null);
 	}
 
-	public boolean saveStatus(Status status) {
-		try {
-			if (statusRepository.existsByNameAndUser(status.getName(), status.getUser())) {
+	public boolean saveStatus(Status status)
+	{
+		try
+		{
+			if(statusRepository.existsByNameAndUser(status.getName(), status.getUser()))
+			{
 				return false;
 			}
 			statusRepository.save(status);
 			return true;
-		} catch (Exception e) {
+		} catch(Exception e)
+		{
 			return false;
 		}
 	}
 
-	public boolean editStatus(Long id, String name, AppUser user) throws AccessDeniedException {
+	public boolean editStatus(Long id, String name, AppUser user) throws AccessDeniedException
+	{
 		Status status = statusRepository.findById(id).orElse(null);
-		if (status == null) {
+		if(status==null)
+		{
 			return false;
 		}
 
-		if (!status.getUser().getId().equals(user.getId())) {
+		if(!status.getUser().getId().equals(user.getId()))
+		{
 			throw new AccessDeniedException("Brak dostępu do tego statusu");
 		}
 
-		if (statusRepository.existsByNameAndUser(name, user) &&
-				!status.getName().equalsIgnoreCase(name)) {
+		if(statusRepository.existsByNameAndUser(name, user)&&
+				!status.getName().equalsIgnoreCase(name))
+		{
 			return false;
 		}
 
@@ -59,17 +71,21 @@ public class StatusService {
 		return true;
 	}
 
-	public boolean deleteStatus(Long id, AppUser user) throws AccessDeniedException {
+	public boolean deleteStatus(Long id, AppUser user) throws AccessDeniedException
+	{
 		Status status = statusRepository.findById(id).orElse(null);
-		if (status == null) {
+		if(status==null)
+		{
 			return false;
 		}
 
-		if (!status.getUser().getId().equals(user.getId())) {
+		if(!status.getUser().getId().equals(user.getId()))
+		{
 			throw new AccessDeniedException("Brak dostępu do tego statusu");
 		}
 
-		if (taskRepository.existsByStatusId(id)) {
+		if(taskRepository.existsByStatusId(id))
+		{
 			return false;
 		}
 

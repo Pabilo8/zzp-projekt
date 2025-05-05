@@ -6,7 +6,6 @@ import pl.ttpsc.taskmanager.model.AppUser;
 import pl.ttpsc.taskmanager.model.Category;
 import pl.ttpsc.taskmanager.repository.CategoryRepository;
 
-
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +34,8 @@ public class CategoryService
 
 	public boolean saveCategory(Category category)
 	{
-		if(categoryExistsForUser(category.getName(), category.getUser())){
+		if(categoryExistsForUser(category.getName(), category.getUser()))
+		{
 			return false;
 		}
 
@@ -47,9 +47,10 @@ public class CategoryService
 	{
 		Category category = getCategoryById(categoryId);
 
-		if(category != null)
+		if(category!=null)
 		{
-			if(category.getUser().getId().equals(user.getId())){
+			if(category.getUser().getId().equals(user.getId()))
+			{
 				_categoryRepository.delete(category);
 			}
 			else
@@ -64,12 +65,12 @@ public class CategoryService
 
 		Category category = getCategoryById(categoryId);
 
-		if(category != null)
+		if(category!=null)
 		{
 			if(category.getUser().getId().equals(user.getId()))
 			{
-				Optional<Category> exists = getCategoriesByUser(user).stream().filter( c -> c
-						.getName().equalsIgnoreCase(newName))
+				Optional<Category> exists = getCategoriesByUser(user).stream().filter(c -> c
+								.getName().equalsIgnoreCase(newName))
 						.findFirst();
 
 				if(exists.isPresent())

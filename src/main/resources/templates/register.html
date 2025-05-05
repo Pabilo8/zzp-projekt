@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
-<!-- Fragment Head -->
+<!-- Head Fragment -->
 <head th:replace="~{fragments :: head('Task Manager - Rejestracja', false)}"></head>
 <body>
 <div class="container mt-5">
-    <h2 class="mb-4 text-center">Registration Page</h2>
+    <h2 class="mb-4 text-center">Task Manager - Rejestracja</h2>
 
     <p th:if="${registerError}" class="alert alert-danger" role="alert">Istnieje użytkownik z taką nazwą</p>
     <p th:if="${registerEmpty}" class="alert alert-danger" role="alert">Nie wypełniono wszystkich pól</p>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
-<!-- Fragment Head -->
+<!-- Head Fragment -->
 <head th:replace="~{fragments :: head('Task Manager - Logowanie', false)}"></head>
 <body>
 <div class="container mt-5">
-    <h2 class="mb-4 text-center">Login Page</h2>
+    <h2 class="mb-4 text-center">Task Manager - Logowanie</h2>
 
     <div th:if="${loginError}" class="alert alert-danger" role="alert">Złe hasło lub użytkownik</div>
     <div th:if="${registerSuccess}" class="alert alert-success" role="alert">Pomyślnie zarejestrowano użytkownika</div>

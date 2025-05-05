@@ -9,8 +9,6 @@ import pl.ttpsc.taskmanager.model.AppUser;
 import pl.ttpsc.taskmanager.model.Status;
 import pl.ttpsc.taskmanager.repository.UserRepository;
 
-import java.util.Optional;
-
 @Service
 public class UserService implements UserDetailsService
 {
@@ -49,9 +47,9 @@ public class UserService implements UserDetailsService
 		_userRepository.save(user);
 
 		//Add default status values for the user
-		addDefaultStatus(user,"NEW");
-		addDefaultStatus(user,"IN_PROGRESS");
-		addDefaultStatus(user,"COMPLETED");
+		addDefaultStatus(user, "NEW");
+		addDefaultStatus(user, "IN_PROGRESS");
+		addDefaultStatus(user, "COMPLETED");
 
 		return true;
 	}

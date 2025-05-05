@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "categories",
 		uniqueConstraints = {
-			@UniqueConstraint(columnNames = {"user_id", "name"})
-	}
+				@UniqueConstraint(columnNames = {"user_id", "name"})
+		}
 )
 public class Category
 {
@@ -20,23 +20,28 @@ public class Category
 	@ManyToOne
 	private AppUser user;
 
-	public Long getId(){
+	public Long getId()
+	{
 		return this.id;
 	}
 
-	public String getName(){
+	public String getName()
+	{
 		return this.name;
 	}
 
-	public void setName(String name){
+	public void setName(String name)
+	{
 		this.name = name;
 	}
 
-	public AppUser getUser(){
+	public AppUser getUser()
+	{
 		return this.user;
 	}
 
-	public void setUser(AppUser user){
+	public void setUser(AppUser user)
+	{
 		this.user = user;
 	}
 }
