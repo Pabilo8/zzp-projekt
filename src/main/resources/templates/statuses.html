@@ -24,13 +24,19 @@
                            placeholder="Nazwa nowego statusu" required ng-change="checkAddDuplicate()">
                     <button type="submit" class="btn btn-primary" ng-disabled="isDuplicateAdd">Dodaj status</button>
                 </div>
-                <div ng-if="isDuplicateAdd" class="alert alert-warning mt-2">
-                    Status o podanej nazwie już istnieje!
-                </div>
+            </form>
+
+            <div>
                 <div th:if="${addStatusError}" class="alert alert-danger mt-2">
                     Nie udało się dodać statusu
                 </div>
-            </form>
+                <div th:if="${deleteStatusError}" class="alert alert-danger mt-2">
+                    Nie można usunąć. Status jest w użyciu.
+                </div>
+                <div th:if="${editStatusError}" class="alert alert-danger mt-2">
+                    Nie udało się zmodyfikować statusu
+                </div>
+            </div>
 
             <!-- Lista statusów z opcją usuwania -->
             <ul class="list-group">

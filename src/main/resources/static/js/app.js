@@ -145,7 +145,7 @@ app.controller('TaskController', function($scope, $timeout) {
     // Usuwanie zadania
     $scope.deleteTask = function(event, task) {
         event.preventDefault();
-        if (confirm('Czy na pewno chcesz usunąć to zadanie?')) {
+        if (confirm(`Czy na pewno chcesz usunąć zadanie \"${task.title}\"?`)) {
             var form = event.target;
             form.action = form.action + task.id;
             form.submit();
@@ -228,9 +228,11 @@ app.controller('StatusController', function($scope, $timeout) {
     // Funkcja obsługująca formularz usuwania
     $scope.deleteStatus = function(event, status) {
         event.preventDefault();
-        var form = event.target;
-        form.action = form.action + status.id;
-        form.submit();
+        if (confirm(`Czy na pewno chcesz usunąć status \"${status.name}\"?`)) {
+            var form = event.target;
+            form.action = form.action + status.id;
+            form.submit();
+        }
     };
 
     // Funkcja obsługująca formularz edycji
