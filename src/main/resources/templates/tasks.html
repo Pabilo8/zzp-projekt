@@ -13,7 +13,7 @@
             <h2><div class="icon-list-todo"></div>Zadania</h2>
 
             <!-- Formularz dodawania zadania -->
-            <form th:action="@{/addTask}" method="post" class="mb-4 p-3 border rounded bg-light">
+            <form th:action="@{/addTask}" method="post" class="mb-4 p-3 border rounded">
                 <h4>Dodaj nowe zadanie</h4>
                 <div class="form-group mb-3">
                     <label for="title">Tytuł zadania:</label>
@@ -72,10 +72,7 @@
             <div class="card mb-3" ng-repeat="task in tasks | filter:searchText | filter:filterByCategory | filter:filterByStatus">
                 <div class="card-header d-flex justify-content-between align-items-center"
                      ng-class="getStatusClass(task.status)">
-                    <h5 class="mb-0">
-                        <span class="badge bg-info">{{getCategoryName(task.category.id)}}</span>
-                        {{task.title}}
-                    </h5>
+                    <h5 class="mb-0">{{task.title}}</h5>
                     <span class="badge" ng-class="getStatusBadgeClass(task.status)">
                         {{task.status.name}}
                     </span>
@@ -83,6 +80,7 @@
                 <div class="card-body">
                     <p class="card-text">{{task.description}}</p>
                     <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-info">{{getCategoryName(task.category.id)}}</span>
                         <div class="btn-group">
                             <button class="btn btn-sm btn-outline-primary me-2" ng-click="openEditModal(task)">Edytuj</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">

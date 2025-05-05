@@ -97,7 +97,7 @@ app.controller('TaskController', function ($scope, $timeout) {
     var editModal;
 
     // Inicjalizacja modala po załadowaniu DOM
-    $timeout(function() {
+    $timeout(function () {
         editModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
     }, 500);
 
@@ -107,7 +107,7 @@ app.controller('TaskController', function ($scope, $timeout) {
         return task.category.id.toString() === $scope.categoryFilter;
     };
 
-    // Filtrowanie po statusie - zaktualizowane
+    // Filtrowanie po statusie
     $scope.filterByStatus = function (task) {
         if (!$scope.statusFilter) return true;
         return task.status && task.status.id.toString() === $scope.statusFilter;
@@ -125,15 +125,16 @@ app.controller('TaskController', function ($scope, $timeout) {
 
     // Określanie klasy CSS na podstawie statusu
     $scope.getStatusClass = function (status) {
-        if (!status) return 'bg-light';
+        if (!status)
+            return '';
 
         // Sprawdzamy po nazwie statusu
-        if (status.name.toLowerCase() === 'new') return 'bg-light';
+        if (status.name.toLowerCase() === 'new') return 'bg-primary';
         if (status.name.toLowerCase() === 'in_progress') return 'bg-warning';
-        if (status.name.toLowerCase() === 'completed') return 'bg-success text-white';
+        if (status.name.toLowerCase() === 'completed') return 'bg-success';
 
         // Domyślnie
-        return 'bg-light';
+        return '';
     };
 
     // Określanie klasy badge na podstawie statusu
@@ -158,7 +159,7 @@ app.controller('TaskController', function ($scope, $timeout) {
     };
 
     // Funkcja otwierająca modal edycji
-    $scope.openEditModal = function(task) {
+    $scope.openEditModal = function (task) {
         // Kopiujemy dane zadania do zmiennych edycji
         $scope.editTaskId = task.id;
         $scope.editTaskTitle = task.title;
@@ -169,13 +170,13 @@ app.controller('TaskController', function ($scope, $timeout) {
         $scope.isDuplicateEdit = false;
 
         // Otwieramy modal
-        $timeout(function() {
+        $timeout(function () {
             editModal.show();
         });
     };
 
     // Funkcja obsługująca formularz edycji zadania
-    $scope.updateTask = function(event) {
+    $scope.updateTask = function (event) {
         if ($scope.isDuplicateEdit) {
             event.preventDefault();
             return;
@@ -302,4 +303,47 @@ app.controller('StatusController', function ($scope, $timeout) {
         form.action = form.action + $scope.editStatusId;
         form.submit();
     };
+});
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const htmlElement = document.documentElement;
+    const themeButtons = document.querySelectorAll('[data-bs-theme-value]');
+    const themeDropdown = document.getElementById('themeDropdown');
+
+    // Function to set active theme
+    const setTheme = (theme) => {
+        if (theme === 'auto') {
+            // Check if user prefers dark mode
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            htmlElement.setAttribute('data-bs-theme', prefersDark ? 'dark' : 'light');
+        } else {
+            htmlElement.setAttribute('data-bs-theme', theme);
+        }
+
+        // Update dropdown button to show current theme
+        const themeText = theme === 'light' ? 'Jasny' :
+                theme === 'dark' ? 'Ciemny' : 'Auto';
+
+        // Store preference
+        localStorage.setItem('bsTheme', theme);
+    };
+
+    // Set up event listeners for theme buttons
+    themeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const theme = button.getAttribute('data-bs-theme-value');
+            setTheme(theme);
+        });
+    });
+
+    // Set up listener for system preference changes when in auto mode
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (localStorage.getItem('bsTheme') === 'auto') {
+            htmlElement.setAttribute('data-bs-theme', e.matches ? 'dark' : 'light');
+        }
+    });
+
+    // Initialize theme from localStorage or default to auto
+    const storedTheme = localStorage.getItem('bsTheme') || 'auto';
+    setTheme(storedTheme);
 });

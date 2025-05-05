@@ -16,8 +16,8 @@
             margin-right: 4px;
         }
     </style>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}"/>
-    <script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"/>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
 </head>
 <body>
 <!-- Fragment paska nawigacyjnego z parametrem activeTab -->
@@ -52,8 +52,37 @@
                 </li>
             </ul>
             <div class="d-flex">
-                    <span class="navbar-text me-3" th:if="${#authentication != null}">
-                        Zalogowano jako: <strong th:text="${#authentication.name}"></strong>
+                <!-- Bootstrap 5 dark mode switch -->
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle navbar-text me-3" type="button" id="themeDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="icon-moon"></div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeDropdown">
+                        <li>
+                            <button class="dropdown-item" type="button" data-bs-theme-value="light">
+                                <div class="icon-sun"></div>
+                                Jasny
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" type="button" data-bs-theme-value="dark">
+                                <div class="icon-moon"></div>
+                                Ciemny
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" type="button" data-bs-theme-value="auto">
+                                <div class="icon-sun-moon"></div>
+                                Auto
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Zalogowany użytkownik -->
+                <span class="navbar-text me-3" th:if="${#authentication != null}">
+                    <div class="icon-user"></div>
+                    <strong th:text="${#authentication.name}"></strong>
                     </span>
                 <form th:action="@{/logout}" method="post">
                     <button type="submit" class="btn btn-outline-light">Wyloguj</button>
