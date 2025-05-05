@@ -1,66 +1,103 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Index Page</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script>
-            function toggleEdit(categoryId)
-            {
-                const form = document.getElementById('edit-form-' + categoryId);
-                form.classList.toggle('d-none');
-                form.classList.toggle('d-flex');
-            }
-        </script>
-    </head>
-
-    <body>
-    <div class="container mt-5">
-        <h2 class="mb-4 text-center">Index Page</h2>
-        <p class="text-center">Welcome to NAME PENDING</p>
-
-        <table class="table table-striped table-bordered" style="table-layout: fixed; width: 100%;">
-            <thead class="table-light">
-                <tr>
-                    <th style="width: 25%">Nazwa</th>
-                    <th>Akcje</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="category : ${categories}">
-                    <td th:text="${category.name}">Nazwa</td>
-                    <td>
-                        <div class="d-flex">
-                            <form th:action="@{/category/delete/{id}(id=${category.id})}" method="post" class="me-2">
-                                <button type="submit" class="btn btn-danger">Usuń</button>
-                            </form>
-                            <button type="button" th:onclick="'toggleEdit(' + ${category.id} + ')'" class="btn btn-warning me-2">Edytuj</button>
-                            <form th:action="@{/category/edit/{id}(id=${category.id})}" method="post" th:id="'edit-form-' + ${category.id}"
-                                  style="display:none;" class="d-none">
-                                <input type="text" name="category_name_edit" th:value="${category.name}" class="form-control w-70 me-2" required/>
-                                <button type="submit" class="btn btn-success">Zapisz</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div th:if="${addCategoryError}" class="alert alert-danger">Istnieje już taka kategoria</div>
-
-        <form th:action="@{/addCategory}" method="post" class="mb-3">
-            <div class="mb-3">
-                <label for="category_name_add" class="form-label">Nazwa kategorii:</label>
-                <input type="text" id="category_name_add" name="category_name_add" class="form-control" required>
+<html xmlns:th="http://www.thymeleaf.org" ng-app="taskManagerApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+    <script th:src="@{/webjars/angularjs/1.8.2/angular.min.js}"></script>
+    <script th:src="@{/js/app.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.3/css/bootstrap.min.css}"/>
+</head>
+<body>
+<!-- Dodanie paska nawigacyjnego z przyciskiem wylogowania -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="#">Task Manager</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/index}">Kategorie</a>
+                </li>
+            </ul>
+            <div class="d-flex">
+                <span class="navbar-text me-3">
+                    Zalogowano jako: <strong th:text="${#authentication.name}"></strong>
+                </span>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-outline-light">Wyloguj</button>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary">Dodaj</button>
-        </form>
-
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn btn-secondary">Wyloguj</button>
-        </form>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+</nav>
+
+<div class="container" ng-controller="CategoryController">
+    <!-- Przekazanie danych z Thymeleaf do AngularJS -->
+    <div th:attr="ng-init='categories=' + ${@objectMapper.writeValueAsString(categories)} + ''" class="row">
+        <div class="col-md-12 mt-4">
+            <h2>Kategorie</h2>
+
+            <!-- Formularz dodawania kategorii -->
+            <form th:action="@{/addCategory}" method="post" class="mb-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="category_name_add" ng-model="newCategory" placeholder="Nazwa nowej kategorii" required>
+                    <button type="submit" class="btn btn-primary">Dodaj kategorię</button>
+                </div>
+                <div th:if="${addCategoryError}" class="alert alert-danger mt-2">
+                    Nie udało się dodać kategorii
+                </div>
+            </form>
+
+            <!-- Lista kategorii z opcją usuwania -->
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center" ng-repeat="category in categories">
+                    <span>{{category.name}}</span>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary me-2" ng-click="openEditModal(category)">Edytuj</button>
+                        <form th:action="@{/category/delete/}" method="post" style="display:inline;" ng-submit="deleteCategory($event, category)">
+                            <input type="hidden" name="id" ng-value="category.id">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Brak kategorii -->
+            <div ng-if="categories.length == 0" class="alert alert-info mt-2">
+                Brak kategorii do wyświetlenia
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal do edycji kategorii - jeden dla wszystkich kategorii -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edytuj kategorię</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/category/edit/}" method="post" ng-submit="updateCategory($event)">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="category_name_edit">Nazwa kategorii:</label>
+                            <input type="text" class="form-control" id="category_name_edit" name="category_name_edit" ng-model="editCategoryName" required>
+                            <input type="hidden" name="id" ng-value="editCategoryId">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dodanie Bootstrap JS do obsługi modali -->
+<script th:src="@{/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js}"></script>
+</body>
 </html>
